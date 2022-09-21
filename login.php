@@ -21,27 +21,56 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-dark-5@1.1.3/dist/css/bootstrap-night.min.css" rel="stylesheet" media="(prefers-color-scheme: dark)">
     <?php
     include("config.php");
-    error_reporting(E_ALL);
-    ini_set('display_errors', 1);
     session_start();
     $error = "";
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        // username and password sent from form 
-        $myusername = mysqli_real_escape_string($db, $_POST['login']);
-        $mypassword = mysqli_real_escape_string($db, $_POST['pass']);
+        switch ($_POST['action']) {
+            case 'login':
+                // username and password sent from form 
+                $myusername = mysqli_real_escape_string($db, $_POST['login']);
+                $mypassword = mysqli_real_escape_string($db, $_POST['pass']);
 
-        $sql = "SELECT id FROM users WHERE login = '$myusername' and pass = '$mypassword'";
-        $result = mysqli_query($db, $sql);
-        $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
-        $count = mysqli_num_rows($result);
+                $sql = "SELECT id, pass FROM users WHERE login = '$myusername'";
+                $result = mysqli_query($db, $sql);
+                $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
+                $count = mysqli_num_rows($result);
 
-        // If result matched $myusername and $mypassword, table row must be 1 row
-        if ($count == 1) {
-            $_SESSION['login_user'] = $myusername;
-            $_SESSION["loggedin"] = TRUE;
-            header("location: index.php");
-        } else {
-            $error = "Your login or password is invalid";
+                // If result matched $myusername and $mypassword, table row must be 1 row
+                if ($count == 1) {
+                    if (password_verify($mypassword, $row["pass"])) {
+                        $_SESSION['login_user'] = $myusername;
+                        $_SESSION["loggedin"] = TRUE;
+                        header("location: index.php");
+                    } else {
+                        $error = "Incorrect password";
+                    }
+                } else {
+                    $error = "User does not exist/Invalid login";
+                }
+                break;
+
+            case 'signin':
+                // username and password sent from form 
+                $myusername = mysqli_real_escape_string($db, $_POST['login']);
+                $mypassword = password_hash(mysqli_real_escape_string($db, $_POST['pass']), PASSWORD_DEFAULT);
+
+                $sql = "SELECT id FROM users WHERE login = '$myusername'";
+                $result = mysqli_query($db, $sql);
+                $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
+                $count = mysqli_num_rows($result);
+                // If result matched $myusername, there must already be a user with that name
+                if ($count == 1) {
+                    $error = "User already exists";
+                } elseif ($count == 0) {
+                    $add = "INSERT INTO `users` (`id`, `login`, `pass`) VALUES (NULL, '$myusername', '$mypassword')";
+                    $result = mysqli_query($db, $add) or die(mysqli_error($db));
+                    if ($result === true) {
+                        $_SESSION['login_user'] = $myusername;
+                        $_SESSION["loggedin"] = TRUE;
+                        header("location: index.php");
+                    }
+                }
+                break;
         }
     }
     ?>
@@ -50,7 +79,7 @@
 <body>
     <div class="h-100 d-flex flex-column align-items-center align-content-center justify-content-center pt-4">
         <div>
-            <h1>gitnab - an experimental VCS.</h1>
+            <h1>gitnab - a minimalist, experimental VCS.</h1>
             <br>
         </div>
         <div>
@@ -59,18 +88,19 @@
                     <h2>Login</h2>
                     <input type="text" class="form-control  my-2" name="login" placeholder="Username" id="login" required>
                     <input type="password" name="pass" class="form-control  my-2" placeholder="Password" id="pass" required>
-                    <button type="submit" class="btn btn-success mb-2  my-2">Log in</button>
+                    <button type="submit" name="action" class="btn btn-success mb-2  my-2" value="login">Log in</button>
+                    <button type="submit" name="action" class="btn btn-primary mb-2  my-2" value="signin">Sign in</button>
                 </div>
                 <?php
-            if (isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) {
-                echo "<p class='text-danger'>You are already logged in, " . $_SESSION['login_user'] . "</p>";
-            }
-            if (!empty($error)) {
-                echo '<div class="text-danger">' . $error . '</div>';
-            }
-            ?>
+                if (isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) {
+                    echo "<p class='text-danger'>You are already logged in, " . $_SESSION['login_user'] . "</p>";
+                }
+                if (!empty($error)) {
+                    echo '<div class="text-danger">' . $error . '</div>';
+                }
+                ?>
             </form>
-            
+
         </div>
     </div>
 

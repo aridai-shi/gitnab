@@ -1,0 +1,28 @@
+Słownik danych:
+- users - Tabela zawierająca dane użytkowników:
+	- id - Numer indentyfikujący użytkownika
+	- login - Login użytkownika
+	- pass - Hasło użytkownika (DO ZROBIENIA: HASHOWANIE)
+- repos - Tabela zawierająca repozytoria
+	- id - Numer indentyfikujący repozytorium
+	- author - Numer indentyfikujący autora repozytorium
+	- title - Tytuł repozytorium
+	- description - Opis repozytorium (NULL możliwy)
+- branches - Tabela zawierająca gałęzie repozytoriów
+	- id - Numer indentyfikujący gałąź
+	- repo - Numer indentyfikujący repozytorium, do którego gałąź należy
+	- name - Nazwa gałęzi
+- commits - Tabela zawierająca commity (tj. iteracje danej gałęzi repozytorium)
+	- id - Numer indentyfikujący commit
+	- branch - Numer indentyfikujący gałąź, do której commit należy
+	- title - Tytuł commitu
+	- description - Opis commitu (NULL możliwy)
+- pull_requests - Tabela zawierająca pull requesty gałęzi (tj. żądania połączenia kilku gałęzi w jedną)
+	- id - Numer indentyfikujący dany pull request
+	- branch - Numer indentyfikujący gałęzi, której dotyczy pull request
+	- merge_with - Numer indentyfikujący gałęzi, w którą ma zostać włączona gałąź "branch"
+	- author - Numer indentyfikujący użytkownika, który utworzył pull requesta
+	- title - Tytuł pull requesta
+	- description - Opis pull requesta (NULL możliwy)
+	- resolved - 0 > Nie rozwiązano pull requesta, 1 > Rozwiązano pull requesta (domyślnie 0)
+	- auto_merge - 0 > Nie można zmergeować automatycznie, 1 > Można zmergeować automatycznie (domyślnie 0)18:09 19/09/2022
