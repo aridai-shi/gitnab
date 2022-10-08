@@ -24,23 +24,24 @@
     session_start();
     $error = "";
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $endloc = (isset($_SESSION['redir_to']) ? "location:".$_SESSION['redir_to'] : "location:index.php");
         switch ($_POST['action']) {
             case 'login':
                 // username and password sent from form 
                 $myusername = mysqli_real_escape_string($db, $_POST['login']);
                 $mypassword = mysqli_real_escape_string($db, $_POST['pass']);
 
-                $sql = "SELECT id, pass FROM users WHERE login = '$myusername'";
+                $sql = "SELECT id, pass, admin FROM users WHERE login = '$myusername'";
                 $result = mysqli_query($db, $sql);
                 $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
                 $count = mysqli_num_rows($result);
-
-                // If result matched $myusername and $mypassword, table row must be 1 row
                 if ($count == 1) {
                     if (password_verify($mypassword, $row["pass"])) {
                         $_SESSION['login_user'] = $myusername;
                         $_SESSION["loggedin"] = TRUE;
-                        header("location: index.php");
+                        $_SESSION['admin'] = ($row["admin"] == 1 || $row["admin"] == true);
+                        $_SESSION['redir_to'] = null;
+                        header($endloc);
                     } else {
                         $error = "Incorrect password";
                     }
@@ -67,7 +68,8 @@
                     if ($result === true) {
                         $_SESSION['login_user'] = $myusername;
                         $_SESSION["loggedin"] = TRUE;
-                        header("location: index.php");
+                        $_SESSION['redir_to'] = null;
+                        header($endloc);
                     }
                 }
                 break;
@@ -93,10 +95,13 @@
                 </div>
                 <?php
                 if (isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) {
-                    echo "<p class='text-danger'>You are already logged in, " . $_SESSION['login_user'] . "</p>";
+                    echo "<p class='text-danger'>You are already logged in, " . $_SESSION['login_user'] . ".</p>";
                 }
                 if (!empty($error)) {
                     echo '<div class="text-danger">' . $error . '</div>';
+                }
+                if (isset($_GET["del"])) {
+                    echo '<div class="text-success">User deleted successfully.</div>';
                 }
                 ?>
             </form>
