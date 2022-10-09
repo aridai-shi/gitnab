@@ -10,7 +10,7 @@ $row = mysqli_fetch_array($ses_sql, MYSQLI_ASSOC);
 
 if (!isset($_SESSION['login_user'])) {
    if (isset($level)) {
-      $_SESSION["redir_to"]="users/index.php";
+      $_SESSION["redir_to"]=$level;
       header("location:../login.php");
       die();
    } else {

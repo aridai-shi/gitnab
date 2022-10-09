@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <?php
-$level = "users";
+$level = "users/index.php";
 include('../verify_sesh.php');
 ?>
 
@@ -60,7 +60,7 @@ include('../verify_sesh.php');
                                 <td>{$repoList}</td>
                                 <td>{$am}</td>
                                 <td>
-                                    <button onclick='move({$row['id']})' class='btn btn-primary'>Change info</button>
+                                    <button onclick='edit({$row['id']})' class='btn btn-primary'>Change info</button>
                                     <button onclick=\"remove({$row['id']},'{$row['login']}',{$row['admin']})\" class='btn btn-danger'>Delete this user</button>
                                 </td>
                             </tr>";
@@ -70,6 +70,9 @@ include('../verify_sesh.php');
             </table>
             <script>
                 const userIsAdmin = <?php if (isset($_SESSION['admin']))echo ($_SESSION['admin']?"true":"false");?>;
+                function edit(id){
+                    window.location.href = "edit.php?id="+id
+                }
                 function remove(id,username,adminVal) {
                     if (!userIsAdmin){
                         alert("Only admins can delete other users.")
@@ -81,7 +84,7 @@ include('../verify_sesh.php');
                     
                     if (confirm === username) {
                         if (admin){
-                            if (window.confirm("This user is an administrator. Are you absolutely sure that you wish to delete your own account?")!==true){
+                            if (window.confirm("This user is an administrator. Are you absolutely sure that you wish to delete this account?")!==true){
                                 return false;
                             }
                         }
