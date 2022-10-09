@@ -114,20 +114,23 @@ include('verify_sesh.php');
                     var confirm = prompt("Are you sure you want to delete this user? This action cannot be undone. Type in the username to confirm.")
                     console.log(confirm)
                     const validate = "<?php echo $_SESSION['login_user'] ?>"
-                    const admin = <?php if (isset($_SESSION['admin']))echo ($_SESSION['admin']?"true":"false");?>;
-                    
+                    const admin = <?php if (isset($_SESSION['admin'])) echo ($_SESSION['admin'] ? "true" : "false"); ?>;
+
                     if (confirm === validate) {
-                        if (admin){
-                            if (window.confirm("You are an administrator. Are you absolutely sure that you wish to delete your own account?")!==true){
+                        if (admin) {
+                            if (window.confirm("You are an administrator. Are you absolutely sure that you wish to delete your own account?") !== true) {
                                 return false;
                             }
                         }
                         var url = "deluser.php";
-                        var params = "id="+<?php if (isset($_SESSION['admin']))echo $id; else echo -1?>;
+                        var params = "id=" + <?php if (isset($_SESSION['admin'])) echo $id;
+                                                else echo -1 ?>;
                         var xhr = new XMLHttpRequest();
                         xhr.open("POST", url, true);
                         xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                        xhr.onload = function(){location.href="logout.php?del"};
+                        xhr.onload = function() {
+                            location.href = "logout.php?del"
+                        };
                         xhr.send(params);
                     } else if (confirm != null) {
                         alert("Incorrect username.")
@@ -137,6 +140,9 @@ include('verify_sesh.php');
             </script>
             <a class="btn btn-warning" href="./logout.php">Log out</a>
             <a class="btn btn-danger" onclick="return confirm_del()">Delete user</a>
+            <br>
+            <br>
+            <a class="btn btn-primary" href="users/index.php">Visit user list</a>
         </footer>
     </div>
 </body>

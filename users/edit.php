@@ -42,21 +42,22 @@ if ($result !== false) {
         <form class="d-flex flex-column text-center">
             <div class="form-group">
                 <label for="login">Username </label>
-                <input type="text" name="login" id="login" default="<?php echo $row["login"] ?>" placeholder="<?php echo $row["login"] ?>" required>
+                <input type="text" name="login" id="login" value="<?php echo $row["login"] ?>" placeholder="<?php echo $row["login"] ?>" autocomplete="new-password" required>
             </div>
             <div class="form-group">
                 <label for="cpass">Current password </label>
-                <input type="password" name="cpass" id="cpass">
+                <input type="password" name="cpass" id="cpass" autocomplete="new-password">
                 <br>
                 <label for="pass">New password </label>
-                <input type="password" name="pass" id="pass">
+                <input type="password" name="pass" id="pass" autocomplete="new-password">
             </div>
             <div class="form-group">
                 <label for="admin">Is an admin </label>
-                <input type="checkbox" name="admin" id="admin" value="<?php echo ($row['admin'] ? "true" : "false"); ?>">
+                <input type="checkbox" name="admin" id="admin" <?php echo ($row['admin'] ? "checked" : ""); ?>>
             </div>
             <div class="form-group">
                 <button type="submit" name="action" class="btn btn-success mb-2  my-2" value="save">Save changes</button>
+                <button type="submit" name="action" class="btn btn-warning mb-2  my-2" value="res">Reset password</button>
                 <button type="submit" name="action" class="btn btn-danger mb-2  my-2" value="delete">Delete user</button>
             </div>
         </form>
@@ -70,10 +71,13 @@ if ($result !== false) {
                 })
                 $("form").submit(function() {
                     var val = $(this).data("action");
+                    console.debug(val)
                     if (val == "save") {
-                        update($("#login").val(), $("#cpass").val(), $("#pass").val(), $("#admin").checked())
+                        update($("#login").val(), $("#cpass").val(), $("#pass").val(), $("#admin").prop('checked'))
                     } else if (val == "delete") {
                         remove(<?php echo "\"{$row["login"]}\",{$row["admin"]}" ?>)
+                    } else if (val == "res") {
+                        reset();
                     }
                     return false;
                 });
@@ -84,7 +88,7 @@ if ($result !== false) {
             });
 
             function update(newLogin, currentPass, newPass, adminVal) {
-                var actualCurrentPass = "<?php echo $row['pass']?>"; // to avoid unnecessary queries in update.php 
+                var actualCurrentPass = "<?php echo $row['pass'] ?>"; // to avoid unnecessary queries in update.php 
                 if (!(userIsAdmin || userIsSelf)) {
                     alert("Only admins can edit other users.")
                     return false;
@@ -98,13 +102,18 @@ if ($result !== false) {
                 var xhr = new XMLHttpRequest();
                 xhr.open("POST", url, true);
                 xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                xhr.onload = function() {
+                xhr.onload = function(e) {
+
+
+                    console.debug(e.target.response)
                     location.reload();
                 };
                 xhr.onerror = function(e) {
                     console.debug(e)
                 }
                 xhr.send(params);
+
+                return false;
 
             }
 
@@ -139,6 +148,30 @@ if ($result !== false) {
                     alert("Incorrect username.")
                 }
                 return false;
+            }
+
+            function reset() {
+                var actualCurrentPass = "<?php echo $row['pass'] ?>"; // to avoid unnecessary queries in update.php 
+                if (!(userIsAdmin || userIsSelf)) {
+                    alert("Only admins can edit other users.")
+                    return false;
+                }
+                var url = "update.php";
+                var params = "id=" + <?php echo $row["id"]; ?> + "&respass=true";
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", url, true);
+                xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xhr.onload = function(e) {
+                    console.debug(e.target.response);
+                    location.reload();
+                };
+                xhr.onerror = function(e) {
+                    console.debug(e)
+                }
+                xhr.send(params);
+
+                return false;
+
             }
         </script>
     </div>
