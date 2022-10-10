@@ -62,7 +62,7 @@ if ($result !== false) {
             </div>
         </form>
         <script>
-            const userIsAdmin = <?php if (isset($_SESSION['admin'])) echo ($_SESSION['admin'] ? "true" : "false"); ?>;
+            const userIsAdmin = <?php if (isset($_SESSION['admin'])) echo ($_SESSION['admin'] ? "true" : "false"); else echo "false";?>;
             const userIsSelf = <?php echo ($row["login"] == $_SESSION["login_user"] ? "true" : "false"); ?>;
 
             $(document).ready(function() {
