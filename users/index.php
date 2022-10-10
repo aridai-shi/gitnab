@@ -29,6 +29,7 @@ include('../verify_sesh.php');
 
 <body>
     <div class="h-100 d-flex flex-column align-items-center align-content-center justify-content-center pt-4 text-center">
+        <p class="text-end w-75">You are logged in, <?php echo $_SESSION["login_user"]?></p>
         <h1>User list</h1>
         <div class="table-responsive" id="users">
             <table class="table-dark table-striped table-bordered table">

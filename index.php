@@ -28,6 +28,7 @@ include('verify_sesh.php');
 
 <body>
     <div class="h-100 d-flex flex-column align-items-center align-content-center justify-content-center pt-4 text-center">
+        <p class="text-end w-75">You are logged in, <?php echo $_SESSION["login_user"]?></p>
         <div class="table-responsive" id="your-repos">
             <h1>Your repositories:</h1>
             <br>
