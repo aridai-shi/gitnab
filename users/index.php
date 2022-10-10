@@ -72,10 +72,10 @@ include('../verify_sesh.php');
 
             <a class="btn btn-primary" href="../index.php">Back to dashboard</a>
             <script>
-                const userIsAdmin = <?php if (isset($_SESSION['admin'])) echo ($_SESSION['admin'] ? "true" : "false"); ?>;
+                const userIsAdmin = <?php if (isset($_SESSION['admin'])) echo ($_SESSION['admin'] ? "true" : "false"); else echo "false"; ?>;
 
                 function edit(id) {
-                    window.location.href = "edit.php?id=" + id
+                    window.location.href = "edit.php?id=" + id;
                 }
 
                 function remove(id, username, adminVal) {
