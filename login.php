@@ -38,6 +38,7 @@
                 if ($count == 1) {
                     if (password_verify($mypassword, $row["pass"])) {
                         $_SESSION['login_user'] = $myusername;
+                        $_SESSION['id_user'] = $row['id'];
                         $_SESSION["loggedin"] = TRUE;
                         $_SESSION['admin'] = ($row["admin"] == 1 || $row["admin"] == true);
                         $_SESSION['redir_to'] = null;
@@ -65,8 +66,10 @@
                 } elseif ($count == 0) {
                     $add = "INSERT INTO `users` (`id`, `login`, `pass`) VALUES (NULL, '$myusername', '$mypassword')";
                     $result = mysqli_query($db, $add) or die(mysqli_error($db));
-                    if ($result === true) {
+                    if ($result !==false) {                
+                        $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
                         $_SESSION['login_user'] = $myusername;
+                        $_SESSION['id_user'] = $row['id'];
                         $_SESSION["loggedin"] = TRUE;
                         $_SESSION['redir_to'] = null;
                         header($endloc);

@@ -28,6 +28,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         } elseif ($count == 1) {
             $query = "UPDATE `users` SET `login` = '{$login}',`pass` = '{$pass}',`admin` = " . $admin . " WHERE `users`.`id` = '{$id}'";
             $result = mysqli_query($db, $query) or die(mysqli_error($db));
+            if ($result!==false){
+                if (($login != $_SESSION['login_user']) && ($id == $_SESSION['id_user'])) $_SESSION['login_user'] = $login;
+            }
         }
     } else {
         $newpass = "";
@@ -48,6 +51,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $result = mysqli_query($db, $query) or die(mysqli_error($db));
         }
     }
+    
 }
 
 

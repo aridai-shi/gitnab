@@ -63,7 +63,7 @@ if ($result !== false) {
         </form>
         <script>
             const userIsAdmin = <?php if (isset($_SESSION['admin'])) echo ($_SESSION['admin'] ? "true" : "false"); else echo "false";?>;
-            const userIsSelf = <?php echo ($row["login"] == $_SESSION["login_user"] ? "true" : "false"); ?>;
+            const userIsSelf = <?php echo ($row["id"] == $_SESSION["id_user"] ? "true" : "false"); ?>;
 
             $(document).ready(function() {
                 $("form button:submit").click(function() {
@@ -93,7 +93,7 @@ if ($result !== false) {
                     alert("Only admins can edit other users.")
                     return false;
                 }
-                if (!(userIsAdmin)) {
+                if (!(userIsAdmin) && (adminVal!=<?php echo ($row['admin'] ? "true" : "false"); ?>)) {
                     alert("Only admins can promote other users to admin status. Ignoring admin setting.")
                     adminVal = false;
                 }
